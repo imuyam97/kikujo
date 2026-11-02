@@ -1,0 +1,24 @@
+# html/ は原則すべて除外し、このプロジェクトで管理するものだけを追跡する
+# (WordPress コア、wp-config-docker.php などは Docker イメージ側が提供する)
+/html/*
+!/html/.htaccess
+!/html/wp-content/
+/html/wp-content/*
+!/html/wp-content/themes/
+/html/wp-content/themes/*
+!/html/wp-content/themes/kikujo-theme/
+
+# TLS 秘密鍵 (generate-site-cert.sh で発行)
+/docker/ssl/ca/ca-key.pem
+/docker/ssl/sites/*.key
+
+# ローカル環境のファイル
+.env
+*.log
+.DS_Store
+.claude/
+*.sql
+*.sql.gz
+
+# Docker 初期化用 SQL ファイルは追跡する
+!/docker/mysql-init/*.sql

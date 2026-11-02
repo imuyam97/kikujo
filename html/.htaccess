@@ -1,0 +1,49 @@
+# BEGIN Security
+# REST API (wp-json) へのアクセスを制限
+<IfModule mod_rewrite.c>
+RewriteEngine On
+
+# wp-json へのアクセスをブロック（ログインユーザー以外）
+RewriteCond %{REQUEST_URI} ^/wp-json/ [OR]
+RewriteCond %{REQUEST_URI} ^/\?rest_route=
+RewriteCond %{HTTP_COOKIE} !wordpress_logged_in [NC]
+RewriteRule .* - [F,L]
+</IfModule>
+
+# XML-RPC を完全にブロック
+<Files xmlrpc.php>
+    Require all denied
+</Files>
+
+# wp-config.php へのアクセスをブロック
+<Files wp-config.php>
+    Require all denied
+</Files>
+
+# .htaccess 自体へのアクセスをブロック
+<Files .htaccess>
+    Require all denied
+</Files>
+
+# readme.html, license.txt へのアクセスをブロック（バージョン情報漏洩防止）
+<FilesMatch "^(readme|license)\.(html|txt)$">
+    Require all denied
+</FilesMatch>
+
+# END Security
+
+# BEGIN WordPress
+# "BEGIN WordPress" から "END WordPress" までのディレクティブ (行) は
+# 動的に生成され、WordPress フィルターによってのみ修正が可能です。
+# これらのマーカー間にあるディレクティブへのいかなる変更も上書きされてしまいます。
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+
+# END WordPress
